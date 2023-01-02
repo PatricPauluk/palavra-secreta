@@ -22,12 +22,18 @@ const stages = [
 
 function App() {
   
-  const [ gameStage, setGameStage ] = useState(stages[0].name);
-  const [ words ] = useState(wordsList);
+  const [ gameStage, setGameStage ] = useState(stages[0].name); // status do jogo
+  const [ words ] = useState(wordsList); // lista de palavras do jogo
 
-  const [ pickedWord, setPickedWord ] = useState('');
-  const [ pickedCategory, setPickedCategory ] = useState('');
-  const [ letters, setLetters ] = useState([]);
+  const [ pickedWord, setPickedWord ] = useState(''); // palavra selecionada
+  const [ pickedCategory, setPickedCategory ] = useState(''); // categoria selecionada
+  const [ letters, setLetters ] = useState([]); // letras da palavra selecionada em array
+  
+  const [ guessedLetters, setGuessedLetters ] = useState([]); // letras adivinhadas
+  const [ wrongLetters, setWrongLetters ] = useState([]); // letras erradas
+  const [ guesses, setGuesses ] = useState(3); // quantidade de chances de adivinhar as letras
+  const [ score, setScore ] = useState(0); // pontuação
+
 
 
   // escolhe a palavra e a categoria
@@ -61,12 +67,12 @@ function App() {
     setGameStage(stages[1].name);
   }
   
-  // verifica a letra enviada
+  // verifica a letra enviada (incompleto)
   const verifyLetter = () => {
     setGameStage(stages[2].name);
   }
 
-  // reinicia o jogo
+  // reinicia o jogo (incompleto)
   const retry = () => {
     setGameStage(stages[0].name)
   }
@@ -74,7 +80,19 @@ function App() {
   return (
     <div className="App">
       { gameStage === "start" && <StartScreen startGame={startGame} /> }
-      { gameStage === "game" && <Game verifyLetter={verifyLetter} /> }
+      { 
+      gameStage === "game" && 
+        <Game 
+          verifyLetter={verifyLetter}
+          pickedWord={pickedWord}
+          pickedCategory={pickedCategory}
+          letters={letters}
+          guessedLetters={guessedLetters}
+          wrongLetters={wrongLetters}
+          guesses={guesses}
+          score={score}
+        />
+      }
       { gameStage === "end" && <GameOver retry={retry} /> }
     </div>
   );

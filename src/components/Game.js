@@ -1,6 +1,21 @@
+import { useState, useRef } from "react";
 import "./Game.css"
 
 const Game = ({ verifyLetter, pickedWord, pickedCategory, letters, guessedLetters, wrongLetters, guesses, score }) => {
+
+  const [ letter, setLetter ] = useState('');
+  const letterInputRef = useRef(null); // Hook useRef cria uma referência ao elemento input ref={letterInputRef} 
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    await verifyLetter(letter);
+
+    // Foca novamente o elemento ao fim do submit
+    letterInputRef.current.focus();
+    setLetter('');
+  }
+
   return (
     <div className="game">
       <p className="points">
@@ -25,8 +40,16 @@ const Game = ({ verifyLetter, pickedWord, pickedCategory, letters, guessedLetter
 
       <div className="letterContainer">
         <p>Tente adivinhar uma letra da palavra</p>
-        <form>
-          <input type="text" name="letter" maxLength="1" required />
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            name="letter"
+            maxLength="1"
+            required
+            onChange={(e) => setLetter(e.target.value)}
+            value={letter}
+            ref={letterInputRef} 
+          />
           <button>Jogar</button>
         </form>
       </div>
@@ -39,7 +62,7 @@ const Game = ({ verifyLetter, pickedWord, pickedCategory, letters, guessedLetter
         ))}
       </div>
 
-      <button onClick={verifyLetter}>Finalizar jogo</button>
+      {/* <button onClick={verifyLetter}>Finalizar jogo</button> */}
     </div>
   )
 }

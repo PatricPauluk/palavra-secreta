@@ -67,10 +67,37 @@ function App() {
     setGameStage(stages[1].name);
   }
   
-  // verifica a letra enviada (incompleto)
-  const verifyLetter = () => {
-    setGameStage(stages[2].name);
+  // verifica a letra enviada
+  const verifyLetter = (letter) => {
+
+    const normalizedLetter = letter.toLowerCase();
+
+    // verifica se a letra já foi enviada anteriormente
+    if (
+      guessedLetters.includes(normalizedLetter) ||
+      wrongLetters.includes(normalizedLetter)
+    ) {
+      return;
+    }
+
+    // verifica se a letra informada esta correta ou errada
+    if (letters.includes(normalizedLetter)) {
+      // actualGuessedLetters é um array com o valor atual de guessedLetters
+      setGuessedLetters(actualGuessedLetters => [
+        ...actualGuessedLetters,
+        normalizedLetter
+      ])
+    } else {
+      setWrongLetters(actualWrongLetters => [
+        ...actualWrongLetters,
+        normalizedLetter
+      ])
+    }
   }
+
+  // logs fora da variavel (dentro eles exibem antes da alteração)
+  console.log(guessedLetters);
+  console.log(wrongLetters);
 
   // reinicia o jogo (incompleto)
   const retry = () => {

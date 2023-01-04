@@ -38,10 +38,8 @@ function App() {
   const [ guesses, setGuesses ] = useState(guessesQty); // quantidade de chances de adivinhar as letras
   const [ score, setScore ] = useState(0); // pontuação
 
-
-
   // escolhe a palavra e a categoria
-  const pickedWordAndCategory = () => {
+  const pickedWordAndCategory = useCallback(() => {
     // captura as keys (nomes) de cada array dentro do objeto
     const categories = Object.keys(words);
 
@@ -52,10 +50,13 @@ function App() {
 
     // retorna a palavra e a categoria aleatória desestruturado como um objeto
     return { word, category };
-  }
+  }, [words]) // passado uma dependência para o funcionamento correto (neste caso o array de palavras)
 
-  // inicia o jogo
-  const startGame = () => {
+  // inicia o jogo, useCallback é necessário para resolver o problema de startGame ser chamado em um useEffect
+  const startGame = useCallback(() => {
+
+    clearLetterStates();
+
     // captura a palavra e categoria aleatória
     const { word, category } = pickedWordAndCategory()
 
@@ -69,7 +70,7 @@ function App() {
     setLetters(wordLetters)
 
     setGameStage(stages[1].name);
-  }
+  }, [pickedWordAndCategory]); // passado uma dependência para o funcionamento correto (neste caso uma função)
   
   // verifica a letra enviada
   const verifyLetter = (letter) => {
@@ -91,7 +92,6 @@ function App() {
         ...actualGuessedLetters,
         normalizedLetter
       ]);
-      setScore(actualScore => actualScore + 3);
     } else {
       setWrongLetters(actualWrongLetters => [
         ...actualWrongLetters,
@@ -106,7 +106,7 @@ function App() {
     setGuessedLetters([]);
     setWrongLetters([]);
   }
-
+  
   // executa sempre que guesses for alterado
   useEffect(() => {
     if(guesses <= 0) {
@@ -114,11 +114,23 @@ function App() {
       setGameStage(stages[2].name); // finaliza o jogo
     }
   }, [guesses])
+  
+  // verifica a condição de vitória
+  useEffect(() => {
+    // new Set() retorna um array de itens únicos (nesse caso, letras)
+    const uniqueLetters = [...new Set(letters)];
+    
+    // verifica se todas as letras foram acertadas, se sim, adiciona pontuação e reinicia o jogo
+    if (uniqueLetters.length === guessedLetters.length && gameStage === "game") {
+      setScore(actualScore => actualScore + 5);
+      startGame();
+    }
+    
+    
+  }, [guessedLetters, letters, startGame])
 
   // logs fora da variavel (dentro de verifyLetter() eles exibem antes da alteração)
-  console.log(guessedLetters);
-  console.log(wrongLetters);
-  console.log(guesses);
+  console.log(gameStage);
 
   // reinicia o jogo
   const retry = () => {

@@ -20,6 +20,9 @@ const stages = [
   { id: 3, name: "end" },
 ];
 
+// quantidade de tentativas
+const guessesQty = 3;
+
 function App() {
   
   const [ gameStage, setGameStage ] = useState(stages[0].name); // status do jogo
@@ -31,7 +34,8 @@ function App() {
   
   const [ guessedLetters, setGuessedLetters ] = useState([]); // letras adivinhadas
   const [ wrongLetters, setWrongLetters ] = useState([]); // letras erradas
-  const [ guesses, setGuesses ] = useState(3); // quantidade de chances de adivinhar as letras
+
+  const [ guesses, setGuesses ] = useState(guessesQty); // quantidade de chances de adivinhar as letras
   const [ score, setScore ] = useState(0); // pontuação
 
 
@@ -82,32 +86,55 @@ function App() {
 
     // verifica se a letra informada esta correta ou errada
     if (letters.includes(normalizedLetter)) {
-      // actualGuessedLetters é um array com o valor atual de guessedLetters
+      // actualGuessedLetters é um array com o valor atual de guessedLetters (função nativa de um setState)
       setGuessedLetters(actualGuessedLetters => [
         ...actualGuessedLetters,
         normalizedLetter
-      ])
+      ]);
+      setScore(actualScore => actualScore + 3);
     } else {
       setWrongLetters(actualWrongLetters => [
         ...actualWrongLetters,
         normalizedLetter
-      ])
+      ]);
+      setGuesses(actualGuesses => actualGuesses - 1); // diminui 1 chance ao errar
     }
   }
 
-  // logs fora da variavel (dentro eles exibem antes da alteração)
+  // limpa as letras adivinhadas e erradas
+  const clearLetterStates = () => {
+    setGuessedLetters([]);
+    setWrongLetters([]);
+  }
+
+  // executa sempre que guesses for alterado
+  useEffect(() => {
+    if(guesses <= 0) {
+      clearLetterStates();
+      setGameStage(stages[2].name); // finaliza o jogo
+    }
+  }, [guesses])
+
+  // logs fora da variavel (dentro de verifyLetter() eles exibem antes da alteração)
   console.log(guessedLetters);
   console.log(wrongLetters);
+  console.log(guesses);
 
-  // reinicia o jogo (incompleto)
+  // reinicia o jogo
   const retry = () => {
-    setGameStage(stages[0].name)
+    setScore(0);
+    setGuesses(guessesQty);
+    setGameStage(stages[0].name);
   }
 
   return (
     <div className="App">
-      { gameStage === "start" && <StartScreen startGame={startGame} /> }
-      { 
+      {   // Inicio do jogo ...
+      gameStage === "start" &&
+        <StartScreen
+          startGame={startGame}
+        />
+      } { // ... durante o jogo ...
       gameStage === "game" && 
         <Game 
           verifyLetter={verifyLetter}
@@ -119,8 +146,13 @@ function App() {
           guesses={guesses}
           score={score}
         />
+      } { // ... fim do jogo.
+      gameStage === "end" &&
+        <GameOver 
+          retry={retry}
+          score={score}
+        />
       }
-      { gameStage === "end" && <GameOver retry={retry} /> }
     </div>
   );
 }

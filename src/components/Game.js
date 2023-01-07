@@ -21,9 +21,9 @@ const Game = ({ verifyLetter, pickedWord, pickedCategory, letters, guessedLetter
       <p className="points">
         <span>Pontuação: {score}</span>
       </p>
-      <h1>Adivinhe a Palavra</h1>
+      <h1>Qual será a palavra?</h1>
       <h3 className="tip">
-        Dica sobre a palavra: <span>{pickedCategory}</span>
+        Dica: <span>{pickedCategory[0].toUpperCase() + pickedCategory.substring(1)}</span>
       </h3>
       <p>Você ainda tem {guesses} tentativa(s).</p>
 
@@ -39,7 +39,7 @@ const Game = ({ verifyLetter, pickedWord, pickedCategory, letters, guessedLetter
       </div>
 
       <div className="letterContainer">
-        <p>Tente adivinhar uma letra da palavra</p>
+        <p>Tente adivinhar uma letra da palavra:</p>
         <form onSubmit={handleSubmit}>
           <input
             type="text"
@@ -50,13 +50,13 @@ const Game = ({ verifyLetter, pickedWord, pickedCategory, letters, guessedLetter
             value={letter}
             ref={letterInputRef} 
           />
-          <button>Jogar</button>
+          <button>Enviar</button>
         </form>
       </div>
       
       {/* Exibe as letras erradas informadas */}
       <div className="worngLettersContainer">
-        <p>Letras já utilizadas</p>
+        <p>Letras já utilizadas:</p>
         {wrongLetters.map((wl, i) => (
           <span key={i}>{wl}, </span>
         ))}

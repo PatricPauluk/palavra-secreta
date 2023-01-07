@@ -6,22 +6,24 @@
   font-weight: bold;
 }
 
-.tip span {
-  color: #ECFA00;
+.tip span,
+.worngLettersContainer span {
+  color: #DC73E6;
 }
 
 .wordContainer {
   margin: 1.5em;
   padding: 1.5em;
-  border: 20px solid #ECFA00;
+  border: 10px solid #E6BBEA;
   display: flex;
+  border-radius: 16px;
 }
 
 .letter,
 .blankSquare {
   font-size: 70px;
-  line-height: 1.5;
-  border: 3px solid #000;
+  line-height: 1.4;
+  border: 3px solid #645266;
   height: 100px;
   width: 100px;
   text-transform: uppercase;

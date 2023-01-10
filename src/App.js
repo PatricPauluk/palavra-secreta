@@ -127,7 +127,7 @@ function App() {
     }
     
     
-  }, [guessedLetters, letters, startGame])
+  }, [guessedLetters, letters, startGame, gameStage])
 
   // logs fora da variavel (dentro de verifyLetter() eles exibem antes da alteração)
   console.log(gameStage);
